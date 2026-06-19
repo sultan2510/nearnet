@@ -1,9 +1,11 @@
 import { Redis } from "@upstash/redis";
 
-// Reads UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN from the
-// environment. Set these in Vercel's Project Settings -> Environment
-// Variables after creating a free Redis database at upstash.com.
-export const redis = Redis.fromEnv();
+// Vercel's Upstash integration sometimes names these KV_REST_API_URL /
+// KV_REST_API_TOKEN instead of UPSTASH_REDIS_REST_URL / _TOKEN. Support both.
+const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+
+export const redis = new Redis({ url, token });
 
 export const ROOM_TTL_SECONDS = 60 * 60 * 24; // 24 hours
 export const SIGNAL_TTL_SECONDS = 120;
