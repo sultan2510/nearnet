@@ -1,9 +1,13 @@
 import { Redis } from "@upstash/redis";
 
-// Vercel's Upstash integration sometimes names these KV_REST_API_URL /
-// KV_REST_API_TOKEN instead of UPSTASH_REDIS_REST_URL / _TOKEN. Support both.
-const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+// Vercel's Upstash integration auto-creates KV_REST_API_URL / KV_REST_API_TOKEN.
+// Prefer those (can't have copy-paste typos), fall back to manually-added ones.
+const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+
+if (!url || !url.startsWith("https://")) {
+  console.error("Redis URL is missing or malformed:", url);
+}
 
 export const redis = new Redis({ url, token });
 
